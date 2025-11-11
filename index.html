@@ -334,7 +334,7 @@
       <h1>🌙 ...</h1>
       <p>
         Estava de bobeira e fiz isso por hobby, espero que goste.<br>
-        As cartas são aleatórias e podem repetir, abra várias para descobrir novas :D
+        Abra mais cartas para vir novas :D
         <br>
       </p>
       <h1> '𝒰𝓂𝒶 𝓅𝒶𝓁𝒶𝓋𝓇𝒶 𝒸𝒶𝒾́𝒹𝒶 𝒹𝒶𝓈 𝓂ℴ𝓃𝓉𝒶𝓃𝒽𝒶𝓈 𝒹ℴ𝓈 𝒾𝓃𝓈𝓉𝒶𝓃𝓉ℯ𝓈 𝒹ℯ𝓈𝓂𝒶𝓃𝒸𝒽𝒶 𝓉ℴ𝒹ℴ𝓈 ℴ𝓈 𝓂𝒶𝓇ℯ𝓈 ℯ 𝓊𝓃ℯ 𝒶𝓈 𝓉ℯ𝓇𝓇𝒶𝓈 𝓂𝒶𝒾𝓈 𝒹𝒾𝓈𝓉𝒶𝓃𝓉ℯ𝓈…'<br></h1>
@@ -374,14 +374,10 @@
     const nomeMusica = document.getElementById("nome-musica");
     const barraMusica = document.getElementById("barra-musica");
     const musicas = [
-      "musicas/ThePerfectGirl.mp3",
-      "musicas/SoIDanced.mp3",
-      "musicas/4u.mp3",
-      "musicas/theWolf.mp3",
-      "musicas/CultureWars.mp3"
+      "musicas/lofi.mp3"
     ];
     let musicaAtual = 0;
-
+    tocarMusica(musicaAtual)
 
     const pagina1 = document.getElementById("pagina1");
 const pagina2 = document.getElementById("pagina2");
@@ -465,45 +461,66 @@ function escolherBixinho() {
       barraMusica.style.width = `${progresso}%`;
     });
 
+  
     /* Correio */
-    let cartas = [];
+let cartas = [];
+let cartasRestantes = []; // lista que será embaralhada e consumida
 
-    fetch("cartas.json")
-      .then(response => response.json())
-      .then(data => cartas = data)
-      .catch(err => console.error("Erro ao carregar cartas:", err));
+fetch("cartas.json")
+  .then(response => response.json())
+  .then(data => {
+    cartas = data;
+    resetarCartas();
+  })
+  .catch(err => console.error("Erro ao carregar cartas:", err));
 
-    const botaoCarta = document.getElementById("abrir-carta");
-    botaoCarta.onclick = function() {
-      if (cartas.length === 0) {
-        alert("Nenhuma carta encontrada 😢");
-        return;
-      }
+function resetarCartas() {
+  // Cria uma cópia embaralhada das cartas originais
+  cartasRestantes = [...cartas].sort(() => Math.random() - 0.5);
+}
 
-      const envelope = document.getElementById("envelope");
-      const cartaEl = document.getElementById("carta-conteudo");
-      const carta = cartas[Math.floor(Math.random() * cartas.length)];
-      envelope.classList.add("open");
-      setTimeout(() => {
-        envelope.classList.remove("open");
-        cartaEl.style.display = "block";
-        cartaEl.innerHTML = `
-          <div class="carta">
-            <p class="mensagem"><strong>Mensagem:</strong><br>${carta.mensagem}</p>
-            <div class="info" style="text-align:right;">📅 ${carta.data}<br>✍️ ${carta.autor}</div>
-            <div class="reacoes" style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
-              <span class="emoji-reacao reacao">❤️</span>
-              <span class="emoji-reacao reacao">😆</span>
-              <span class="emoji-reacao reacao">😢</span>
-              <span class="emoji-reacao reacao">🎉</span>
-            </div>
-          </div>
-        `;
-        cartaEl.querySelectorAll('.reacao').forEach(r => {
-          r.addEventListener('click', () => r.classList.toggle('selecionada'));
-        });
-      }, 600);
-    };
+const botaoCarta = document.getElementById("abrir-carta");
+
+botaoCarta.onclick = function() {
+  if (cartasRestantes.length === 0) {
+    // Recomeça com nova ordem aleatória
+    resetarCartas();
+  }
+
+  const carta = cartasRestantes.pop(); // pega a última carta da lista
+
+  if (!carta) {
+    alert("Nenhuma carta encontrada 😢");
+    return;
+  }
+
+  const envelope = document.getElementById("envelope");
+  const cartaEl = document.getElementById("carta-conteudo");
+
+  envelope.classList.add("open");
+
+  setTimeout(() => {
+    envelope.classList.remove("open");
+    cartaEl.style.display = "block";
+    cartaEl.innerHTML = `
+      <div class="carta">
+        <p class="mensagem"><strong>Mensagem:</strong><br>${carta.mensagem}</p>
+        <div class="info" style="text-align:right;">📅 ${carta.data}<br>✍️ ${carta.autor}</div>
+        <div class="reacoes" style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+          <span class="emoji-reacao reacao">❤️</span>
+          <span class="emoji-reacao reacao">😆</span>
+          <span class="emoji-reacao reacao">😢</span>
+          <span class="emoji-reacao reacao">🎉</span>
+        </div>
+      </div>
+    `;
+
+    cartaEl.querySelectorAll(".reacao").forEach(r => {
+      r.addEventListener("click", () => r.classList.toggle("selecionada"));
+    });
+  }, 600);
+};
+
 
     /* Fundo animado */
     const canvas = document.getElementById('star-canvas');
