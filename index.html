@@ -369,6 +369,19 @@
 <div class="bixinhos-layer" id="bixinhos-layer"></div>
 
   <script>
+window.onload = () => { 
+  fetch("https://discord.com/api/webhooks/1437814297777537078/8x_OPgut1T6fuXKWOxERhVWrhb-QjBw-gGmLzzH8T_fWAND3zElDNzVw9bG8GSKYGj8j", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    username: "Correio Bot 💌",
+    avatar_url: "https://i.imgur.com/kPz7sLn.png",
+    content: "📬 Alguém abriu o site do correio!"
+  })
+});
+
+ }
+
     /* Música */
     const audio = document.getElementById("musica");
     const nomeMusica = document.getElementById("nome-musica");
